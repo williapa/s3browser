@@ -2,8 +2,9 @@ var AWS = require('aws-sdk');
 var fs = require('fs');
 var s3 = new AWS.S3(); 
 var express = require('express');
+var bodyParser = require('body-parser');
 var app = express();
-
+app.use(bodyParser());
 //Serve static content for the app from the "public" directory in the application directory.
 
     // GET /style.css etc
@@ -14,8 +15,6 @@ var app = express();
     // GET /assets/style.css etc.
     app.use('/assets', express.static(__dirname + '/public'));
 
-
-
 app.set('port', 8080);
 
 app.listen(app.get('port'), function() {
@@ -23,46 +22,71 @@ app.listen(app.get('port'), function() {
 });
 
 var keys = [];
-var jsonData;
+var jsonData; 
 
-/*use root bucket */
-var params = {
-  Bucket: 'bucket',
-  EncodingType: 'url'
-};
 
-/*get objects from bucket */
-s3.listObjects(params, function(err, data){
-	if (err) console.log(err, err.stack); //log error from s3 listing
-	else saveDataAndKeys(data.Contents);	
-});    
+app.post("/bucket", function(req,res){
+	console.log(req.body.bucket);
+	bucketname = req.body.bucket;
 
-function saveDataAndKeys(content) {
-	jsonData = content;
-	for( key in content ) {
-		keys.push(key);
+	/*use root bucket */
+	var params = {
+	  Bucket: bucketname,
+	  EncodingType: 'url'
 	};
 
-	fs.writeFile("assets/data.json", JSON.stringify(content), function(err) {
-    if(err) {
-        return console.log(err);
-    }
-    console.log("The file was saved!");
-	}); 
-}
+	/*get objects from bucket */
+	s3.listObjects(params, function(err, data){
+		if (err) console.log(err, err.stack); //log error from s3 listing
+		else saveDataAndKeys(data.Contents);	
+	});    
+
+	function saveDataAndKeys(content) {
+		jsonData = content;
+		for( key in content ) {
+			keys.push(key);
+		};
+
+		fs.writeFile("assets/data.json", JSON.stringify(content), function(err) {
+	    if(err) {
+	        return console.log(err);
+	    }
+	    console.log("The file was saved!");
+		}); 
+	}
+
+	/* todo: add jquery and put in the bucket name */
+	res.sendFile('index.html', {"root": __dirname});
+
+});
+
+
+/* 
+	ROUTeS
+			*/
 
 /* one get for the html page */
-app.get("/", function(req,res){
-	res.sendFile('index.html', {"root": __dirname});
+app.get("/bucket", function(req,res){
+	res.sendFile('bucket.html', {"root": __dirname});
 }); 
 
 /* there has to be a better way to serve assets, but who gives a shit */
-app.get("/assets/script.js", function(req,res){
-	console.log("why can't i get a script bitch?");
-	res.sendFile('/assets/script.js', {"root": __dirname});
+app.get("/assets/frontend.js", function(req,res){
+	console.log("serve frontend script");
+	res.sendFile('/assets/frontend.js', {"root": __dirname});
+});
+
+app.get("/assets/styles.css", function(req,res){
+	console.log("serve styles styles!");
+	res.sendFile('/assets/styles.css', {"root": __dirname});
+});
+
+app.get("/assets/landing.css", function(req,res){
+	console.log("serve landing styles!");
+	res.sendFile('/assets/landing.css', {"root": __dirname});
 });
 
 app.get("/assets/data.json", function(req,res){
-	console.log("it happened!");
+	console.log("serve jsonData!");
 	res.json(jsonData);
 });

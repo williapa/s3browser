@@ -4,36 +4,53 @@
 <head lang="en">
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-
-	<title>InternExplorer</title>
+	<title>InternExtplorer</title>
 	<!-- Include our stylesheet
 	<link href="assets/css/styles.css" rel="stylesheet"/> -->
 	<!--jquery front end, script loading files in frontend.js -->
 	<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
-	<script src="assets/script.js"></script>
+	<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+	<script src="/assets/frontend.js"></script>
+	<link href="assets/styles.css" rel="stylesheet"/>
 </head>
-<body>
+<body class="site">
+  <header class="searchbox">
+	<i class="searchicon material-icons">search</i>
+	<input type="search" placeholder="click shadow to close" />
+  </header>
+  <main class="filemanager">
 
-	<div class="explorer">
+    <div id="column1" class="column1">
+	  <div class="breadcrumbs breadcrumbs1"></div>
+      <ul class="data"></ul>
+	  <div class="nothingfound">
+		<div class="nofiles"></div>
+		<span>No files here.</span>
+	  </div>
+    </div>
 
-		<div class="search">
-			<input type="search" placeholder="Find a file.." />
-			<button id="button">make json request</button>
-		</div>
+    <div id="column2" class="column2">
+	  <div class="breadcrumbs breadcrumbs2"><span></span></div>
+      <ul class="data"></ul>
+	  <div class="nothingfound">
+		<div class="nofiles"></div>
+		<span>No files here.</span>
+	  </div>
+    </div>
 
-		<div class="bucketparents"></div>
+    <div id="column3" class="column3">
+	  <div class="breadcrumbs breadcrumbs3"><span></span></div>
+      <ul class="data"></ul>
+	  <div class="nothingfound">
+		<div class="nofiles"></div>
+		<span>No files here.</span>
+	  </div>
+    </div>
 
-		<ul class="data"></ul>
-
-		<div class="emptybucket">
-			<div class="nofiles"></div>
-			<span>No files here.</span>
-		</div>
-	</div>
-
-	<footer>
-    </footer>
-
-
+  </main>
+  <!--flexbox sticky footer -->
+  <footer>
+	<p class="myname">Paul Williams</p>
+  </footer>
 </body>
 </html>
