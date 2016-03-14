@@ -21,7 +21,6 @@ app.listen(app.get('port'), function() {
   console.log('Node app is running on port', app.get('port'));
 });
 
-var keys = [];
 var jsonData; 
 
 
@@ -38,16 +37,15 @@ app.post("/bucket", function(req,res){
 	/*get objects from bucket */
 	s3.listObjects(params, function(err, data){
 		if (err) console.log(err, err.stack); //log error from s3 listing
-		else saveDataAndKeys(data.Contents);	
+		else saveDataAndKeys(data.Contents, bucketname);	
 	});    
 
-	function saveDataAndKeys(content) {
+	function saveDataAndKeys(content, bucket) {
 		jsonData = content;
-		for( key in content ) {
-			keys.push(key);
-		};
-
-		fs.writeFile("assets/data.json", JSON.stringify(content), function(err) {
+		jsonData.push({"bucketName": bucket});
+		console.log(jsonData.bucketName);
+		
+		fs.writeFile("assets/data.json", JSON.stringify(jsonData), function(err) {
 	    if(err) {
 	        return console.log(err);
 	    }

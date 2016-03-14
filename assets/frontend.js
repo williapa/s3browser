@@ -7,7 +7,7 @@ $(function(){
   currentFolders = [];
   folders = [];
   fileTypes = [];
-  var filemanager = $('.filemanager'),
+   var filemanager = $('.filemanager'),
   breadcrumbs = $('.breadcrumbs'),
   fileList = filemanager.find('.data');
 
@@ -76,6 +76,7 @@ $(function(){
   $.getJSON('assets/data.json', function (data) {
 
   	var response = [data],
+    bucketName = response["bucketName"];
 	  currentPath = '',
 	  breadcrumbsUrls = [];
 
@@ -117,8 +118,7 @@ $(function(){
     fileTypes = [];
     folderCounts = new Array(); /* todo make hash map and map the name of the bucket to the number items innit  */
     a = 0;
-
-    while(a<data.length){
+    while(a<data.length && data[a].Key){
       var item = data[a];
       str = item.Key;
 
@@ -165,7 +165,6 @@ $(function(){
         }
         else {
           file_path = data[item].Key.substring(0, data[item].Key.lastIndexOf("/"))
-          console.log(file_path);
           if(displaybucket == file_path+"/"){
             currentFiles.push(item);
           }
@@ -183,13 +182,11 @@ $(function(){
 
   /* Render the HTML for the file manager */
   function render(data){
-
-    console.log(data.length);
-
-    updateView(data, "/", 1);
-
+    bucketName = data[data.length-1].bucketName
     //initial bucket name
-    $(".breadcrumbs1").append("<span>pw106</span>");
+    $(".breadcrumbs1").append("<span>s3.amazonaws.com/"+bucketName+"/</span>");
+    delete data[data.length-1].bucketName;
+    updateView(data, "/", 1);
   }
 
  /* Recursively search through the file tree */
@@ -234,7 +231,6 @@ $(function(){
       $("#"+this.id).children(":first").addClass("selected");
       updateView(data, data[this.id].Key, (++currentRow));
       hashdest = "column"+(currentRow);
-      console.log(hashdest);
       window.location.hash = hashdest;
     });
   });
@@ -260,9 +256,7 @@ $(function(){
       $('.files').removeClass("selected");
       $("#"+this.id).children(":first").toggleClass("selected");
       /* todo change to link to the file */
-
-      hashdest = "top";
-      window.location.hash = hashdest;
+      window.location.href = "https://s3.amazonaws.com/"+bucketName+"/"+data[this.id].Key;
     });
   });
   if(currentFiles.length == 0 && currentFolders.length == 0){
