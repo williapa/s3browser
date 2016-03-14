@@ -40,7 +40,7 @@
 	flex-direction: row;
 	justify-content: center;
 	align-items: center;
-	box-shadow: -10px -8px 40px 0px #11121e;
+	box-shadow: -10px -8px 40px 3px #11121e;
 	background-color: #23232e;
 	border-top-style: solid;
 	border-left-style: solid;

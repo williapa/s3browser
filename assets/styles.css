@@ -89,7 +89,7 @@ body {
 }
 
 .site .searchicon {
-	border-radius: 2px;
+	border-radius: 8px;
 	background-color: #04dd6a; /* #44aadc; */
 	box-shadow: 3px 2px 0px rgba(10,10,40,0.30), 2px 2px 0px rgba(10,10,40,0.18);
 	color: white;
@@ -102,7 +102,7 @@ body {
 
 .site input[type=search] {
 
-	border-radius: 2px;
+	border-radius: 3px;
 	color: #4D535E;
 	background-color: #FFF;
 	max-width: 250px;
@@ -114,6 +114,7 @@ body {
 	display: none;
 	outline: none;
 	border: none;
+	animation: showSlowlyElement 300ms;
 }
 
 
@@ -135,7 +136,7 @@ body {
 
 .filemanager .data li {
 	box-shadow: 1px 2px 4px rgba(0,0,0,0.12), 1px 2px 3px rgba(0,0,0,0.24);
-    transition: all 0.2s ease-in-out;
+   	animation: showSlowlyElement 700ms;
 	border-radius: 10px;
 	background-color: #1177bb;
 	width: 93%;
@@ -484,7 +485,7 @@ body {
 	flex: 1 auto;
 }
 
-.site .column1, .site .column2, .site .column3 {
+.site .column1, .site .column2, .site .column3, .site .column4, .site .column5, .site .column6 {
 /*	border-right-style: solid;
 	border-width: 1px;
 	border-color: #efefef;*/
@@ -496,9 +497,17 @@ body {
 }
 
 .selected {
-	background-color: #04f58a !important;
+	background-color: #04dd6a !important;
 }
 
+
+.emptyfolder {
+	background-color: #494949 !important;
+}
+
+.searchHide {
+	display: none;
+}
 /* handle media devices smaller than normal */
 
 @media all and (max-width:639px) {
@@ -512,7 +521,7 @@ body {
 		width: 90%;
 	}
 
-	.site .column1, .site .column2, .site .column3 {
+	.site .column1, .site .column2, .site .column3, .site .column4, .site .column5, .site .column6 {
 		min-width: 100%;
 	}
 }

@@ -1,17 +1,20 @@
 $(function(){
 
   /*adapted from http://tutorialzine.com/2014/09/cute-file-browser-jquery-ajax-php */
-  currentRow = 1;
+  currentColumn = 1;
+  d = [{}];
   files = [];
   currentFiles = [];
   currentFolders = [];
   folders = [];
   fileTypes = [];
-  var filemanager = $('.filemanager'),
+   var filemanager = $('.filemanager'),
   breadcrumbs = $('.breadcrumbs'),
   fileList = filemanager.find('.data');
 
-
+  $('.nothingfound').click(function(){
+    window.location.hash = "top";
+  })
    $('.searchicon').click(function(){
         $('input').show().focus();
     });
@@ -22,31 +25,29 @@ $(function(){
 
     $('.site').find('input').on('input', function(e){
 
-      folders = [];
-      files = [];
-
       var value = this.value.trim();
 
-      if(value.length) {
+      filemanager.addClass('searching');
 
-        filemanager.addClass('searching');
+      // Update the hash on every key stroke
+      window.location.hash = 'search=' + value;
+      hideTheseFiles = [];
+      showTheseFiles = [];
+      files.forEach(function(item){
+        if(parseFileName(d[item].Key.toLowerCase()).indexOf(value.toLowerCase()) == -1){
+          hideTheseFiles.push(item);
+        }
+        else{
+          showTheseFiles.push(item);
+        }
+      });
 
-        // Update the hash on every key stroke
-        window.location.hash = 'search=' + value.trim();
-
-      }
-
-      else {
-
-        filemanager.removeClass('searching');
-        //window.location.hash = encodeURIComponent(currentPath);
-
-      }
+      filemanager.removeClass('searching');
+      filterCurrentFiles(hideTheseFiles, showTheseFiles);
 
     }).on('keyup', function(e){
 
       // Clicking 'ESC' button triggers focusout and cancels the search
-
       var search = $(this);
 
       if(e.keyCode == 27) {
@@ -58,16 +59,10 @@ $(function(){
     }).focusout(function(e){
 
       // Cancel the search
-
+      endSearch();
       var search = $(this);
+      search.hide();
 
-      if(!search.val().trim().length) {
-
-        //window.location.hash = encodeURIComponent(currentPath);
-        search.hide();
-        search.parent().find('span').show();
-
-      }
 
   });
 
@@ -75,7 +70,8 @@ $(function(){
 
   $.getJSON('assets/data.json', function (data) {
 
-  	var response = [data],
+  	d = data;
+    bucketName = data["bucketName"];
 	  currentPath = '',
 	  breadcrumbsUrls = [];
 
@@ -108,7 +104,55 @@ $(function(){
   function searchByPath(dir) {}
 
   function updateView(data,displaybucket,level){
-    
+    //todo, make a function and turn into animations
+    if(level==1){
+      $('#column1').show();
+      $('#column2').show();
+      $('#column3').show();
+      $('#column4').hide();
+      $('#column5').hide();
+      $('#column6').hide();
+    }
+    else if(level==2){
+      $('#column1').show();
+      $('#column2').show();
+      $('#column3').show();
+      $('#column4').hide();
+      $('#column5').hide();
+      $('#column6').hide();
+    }
+    else if(level==3){
+      $('#column1').show();
+      $('#column2').show();
+      $('#column3').show();
+      $('#column4').hide();
+      $('#column5').hide();
+      $('#column6').hide();
+    }
+    else if(level==4){
+      $('#column1').hide();
+      $('#column2').show();
+      $('#column3').show();
+      $('#column4').show();
+      $('#column5').hide();
+      $('#column6').hide();
+    }
+    else if(level==5){
+      $('#column1').hide();
+      $('#column2').hide();
+      $('#column3').show();
+      $('#column4').show();
+      $('#column5').show();
+      $('#column6').hide();
+    }
+    else {
+      $('#column1').hide();
+      $('#column2').hide();
+      $('#column3').hide();
+      $('#column4').show();
+      $('#column5').show();
+      $('#column6').show();
+    }
     /*files and folders track the INDEX of the data item. use data[a].Property to get the item */
     files = [];
     currentFiles = [];
@@ -117,15 +161,14 @@ $(function(){
     fileTypes = [];
     folderCounts = new Array(); /* todo make hash map and map the name of the bucket to the number items innit  */
     a = 0;
-
-    while(a<data.length){
+    while(a<data.length && data[a].Key){
       var item = data[a];
       str = item.Key;
 
       //check if the item is the bucket we're displaying
       if(str == displaybucket) { 
         //add breadcrumb2 or 3
-        $('.breadcrumbs'+level+" span").text(str);
+        $('.breadcrumbs'+level+" span").text(parseFileName(str));
       }
       //add case for index objects lvl 1
       else if(displaybucket == "/"){
@@ -165,7 +208,6 @@ $(function(){
         }
         else {
           file_path = data[item].Key.substring(0, data[item].Key.lastIndexOf("/"))
-          console.log(file_path);
           if(displaybucket == file_path+"/"){
             currentFiles.push(item);
           }
@@ -183,13 +225,11 @@ $(function(){
 
   /* Render the HTML for the file manager */
   function render(data){
-
-    console.log(data.length);
-
-    updateView(data, "/", 1);
-
+    bucketName = data[data.length-1].bucketName
     //initial bucket name
-    $(".breadcrumbs1").append("<span>pw106</span>");
+    $(".breadcrumbs1").append("<span>s3.amazonaws.com/"+bucketName+"</span>");
+    delete data[data.length-1].bucketName;
+    updateView(data, "/", 1);
   }
 
  /* Recursively search through the file tree */
@@ -198,13 +238,26 @@ $(function(){
  /* Generates breadcrumbs */
  function generateBreadcrumbs(nextDir){}
 
+ function endSearch(){
+  $("a").removeClass("searchHide");
+ }
+
  /* Navigates to the given hash (path) */
- function goto(hash) {}
+ function filterCurrentFiles(newFolders, oldFolders){
+
+    newFolders.forEach(function(item){
+      $("#"+item).addClass("searchHide");
+    });
+
+    oldFolders.forEach(function(item){
+      $("#"+item).removeClass("searchHide");
+    });
+ }
 
  function updateHTML(currentFiles, currentFolders, files, folders, data, column){ //data always is just all da data, column is the column to refresh
   //folders
   currentFolders.forEach(function(item){
-    str = parseFileName(data[item].Key);
+    str = data[item].Key;
     children = 0;
     files.forEach(function(t){
       if(data[t].Key.indexOf(str) != -1) { 
@@ -216,13 +269,13 @@ $(function(){
         children+=1; 
       }
     });
-    $(".column"+column+" .data").append("<a id='"+item+"'><li class='folders'><span class='icon folder full'></span><span class='name'>"+str+"</span>"+"<span class='details'>"+children+" items</span></li></a>");
+    $(".column"+column+" .data").append("<a id='"+item+"'><li class='folders'><span class='icon folder full'></span><span class='name'>"+parseFileName(str)+"</span>"+"<span class='details'>"+children+" items</span></li></a>");
   
     //folderclick
     $("#"+item).click(function(){
       //get current column (X) by looking at last char of the li's parent parent, the <A id="columnX">
-      currentRow = $(this).parent().parent().attr('id').charAt(6);
-      x = currentRow;
+      currentColumn = $(this).parent().parent().attr('id').charAt(6);
+      x = currentColumn;
       while(x<6){
         x++;
        $("#column"+x+" .data").empty();
@@ -230,11 +283,17 @@ $(function(){
        $("#column"+x+" .breadcrumbs span").text("");
       }
 
-      $("#column"+(currentRow)+" .data li").removeClass("selected");
-      $("#"+this.id).children(":first").addClass("selected");
-      updateView(data, data[this.id].Key, (++currentRow));
-      hashdest = "column"+(currentRow);
-      console.log(hashdest);
+      $("#column"+(currentColumn)+" .data li").removeClass("selected emptyfolder");
+
+      childs = $("#"+this.id+" .details").text();
+      if(childs[0] == "0") {
+        $("#"+this.id).children(":first").addClass("emptyfolder");
+      }
+      else {
+        $("#"+this.id).children(":first").addClass("selected");
+      }
+      updateView(data, data[this.id].Key, (++currentColumn));
+      hashdest = "column"+currentColumn;
       window.location.hash = hashdest;
     });
   });
@@ -242,27 +301,26 @@ $(function(){
   //files
   currentFiles.forEach(function(item){
     str = parseFileName(data[item].Key);
+    fileNames = str.split("/");
     bytes = bytesToSize(data[item].Size);
-    $(".column"+column+" .data").append("<a id='"+item+"'><li class='files'><span class='icon file f-html'>"+fileTypes[item]+"</span><span class='name'>"+str+"</span><span class='details'>"+bytes+" KB</span></li></a>");
+    $(".column"+column+" .data").append("<a id='"+item+"'><li class='files'><span class='icon file f-html'>"+fileTypes[item]+"</span><span class='name'>"+fileNames[fileNames.length-1]+"</span><span class='details'>"+bytes+" KB</span></li></a>");
   
 
     //fileclick
     $("#"+item).click(function(){
-      currentRow = $(this).parent().parent().attr('id').charAt(6);
-      x = currentRow;
+      currentColumn = $(this).parent().parent().attr('id').charAt(6);
+      x = currentColumn;
       while(x<6){
         x++;
        $("#column"+x+" .data").empty();
        $("#column"+x+" .nothingfound").hide();
        $("#column"+x+" .breadcrumbs span").text("");
       }
-      $('#column'+(currentRow)+' .data li').removeClass("selected");
+      $('#column'+(currentColumn)+' .data li').removeClass("selected emptyfolder");
       $('.files').removeClass("selected");
       $("#"+this.id).children(":first").toggleClass("selected");
       /* todo change to link to the file */
-
-      hashdest = "top";
-      window.location.hash = hashdest;
+      window.location.href = "https://s3.amazonaws.com/"+bucketName+"/"+data[this.id].Key;
     });
   });
   if(currentFiles.length == 0 && currentFolders.length == 0){
