@@ -66,7 +66,7 @@ app.post("/bucket", function(req,res){
 			*/
 
 /* one get for the html page */
-app.get("/bucket", function(req,res){
+app.get("/", function(req,res){
 	res.sendFile('bucket.html', {"root": __dirname});
 }); 
 

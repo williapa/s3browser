@@ -1,5 +1,10 @@
-@charset "utf-8";
+/*-----------------------------------------------------------------------------
 
+adapted from http://tutorialzine.com/2014/09/cute-file-browser-jquery-ajax-php 
+
+-----------------------------------------------------------------------------*/
+
+@charset "utf-8";
 
 /*-------------------------
 	Simple reset
@@ -38,7 +43,7 @@ body {
 
 
 /*-------------------------
-	Breadcrums
+	Breadcrumbs
 -------------------------*/
 
 
@@ -86,7 +91,7 @@ body {
 .site .searchicon {
 	border-radius: 2px;
 	background-color: #04dd6a; /* #44aadc; */
-	box-shadow: -5px 0px 1px rgba(10,10,40,0.30), -5px 0px 1px rgba(10,10,40,0.18);
+	box-shadow: 3px 2px 0px rgba(10,10,40,0.30), 2px 2px 0px rgba(10,10,40,0.18);
 	color: white;
 	cursor: pointer;
 	font-size: 240%;
@@ -501,7 +506,8 @@ body {
 	.site .filemanager {
 		flex-direction: column;
 		display: flex;
-		flex: 1 auto;639
+		flex: 1 auto;
+	}
 	.filemanager .data li {
 		width: 90%;
 	}
