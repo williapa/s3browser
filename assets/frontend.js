@@ -294,6 +294,7 @@ $(function(){
       }
       updateView(data, data[this.id].Key, (++currentColumn));
       hashdest = "column"+currentColumn;
+
       window.location.hash = hashdest;
     });
   });

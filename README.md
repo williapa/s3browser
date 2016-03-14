@@ -14,20 +14,23 @@ you now view the items(files) and buckets(folders) within that bucket.
 
 Express is used in the server because it will eventually need to build an html response.
 
-
 #to-do-list
 
-3) scroll horizontally 
+1) create new button
 
-6) search feature
+2) delete button
 
-7) create new button
+3) reupload button
 
-8) delete button
+4) back button
 
-9) reupload button
+5) search options
 
-10) add animation
+6) sort options
+
+7) file icons
+
+8) animation
  
 
 

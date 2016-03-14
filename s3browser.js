@@ -47,7 +47,6 @@ app.post("/bucket", function(req,res){
 	function saveDataAndKeys(content, bucket) {
 		jsonData = content;
 		jsonData.push({"bucketName": bucket});
-		
 		fs.writeFile("assets/data.json", JSON.stringify(jsonData), function(err) {
 	    if(err) {
 	        return console.log(err);
